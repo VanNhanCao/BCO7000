@@ -1,0 +1,91 @@
+---
+title: "Assessment3"
+author: "Chi WAN"
+date: "08/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(skimr)
+
+ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-11-03/ikea.csv')
+```
+
+## Executive Summary
+```{r}
+## Product are not sellable online
+ikea%>%
+  filter(sellable_online=="FALSE")
+```
+
+```{r}
+## count category
+ikea%>%
+  count(category,sort = TRUE)
+```
+```{r}
+ikea%>%
+  count(designer, sort = TRUE)
+```
+
+```{r}
+## How is the price relaed to the furniture dimensions?
+ikea%>%
+  count(other_colors,sort = TRUE)
+```
+
+```{r}
+## Display the 
+
+```
+
+## Introduction
+
+##Target Audience:
+CEO of IKEA
+
+##Purpose of Scope:
+The target for this presentation is to increase the sales by reducing the price, increasing the number of sales.
+
+##Strategy:
+-To determine the top selling products
+-To maximize the sales
+-To re-adjust the price if the sales is not hit the target
+-To push every single product online
+-To maximize the choice of the color
+
+##Finding:
+- We realize that the not all of the product are available online, which means 28 products are not for online sale, the stock will be stuck and the inventory cost will be increase.
+- To review the price as Ikea already did, we can see that 654 out of 3694 had adjusted the price, use case_by to identify the old_price vs current price
+- The percentage of the price after discount = the
+- New expected consumption= (discount) *number of products
+
+```{r}
+## Price, remove the no old price
+ikea<-ikea%>%
+  mutate(old_price= parse_number(old_price))
+```
+
+```{r}
+## create a new variable for discount = Old price - Price
+ikea<-ikea%>%
+  mutate(discount=100-price/old_price*100)
+```
+
+```{r}
+##The items that have discount price/ total number of items, The percentage can show that our business runs well or not, regression modal. 
+
+
+```
+
+```{r}
+## Classification model, with not sellable online check the percentage how many items have a new price
+
+
+
+```
+
+
+## 
