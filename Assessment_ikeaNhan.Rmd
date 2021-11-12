@@ -26,6 +26,25 @@ ikea%>%
   count(category,sort = TRUE)
 ```
 ```{r}
+ikea %>%
+  add_count(category) %>%
+  mutate(category_fct = fct_reorder(category, n)) %>%
+  ggplot(aes(x = category_fct)) +
+  geom_bar() +
+  geom_text(aes(label = n, y = n), nudge_y = 30)+
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "Items",
+       y = "Number",
+       title = "Category")
+
+```
+```{r}
+## create a new variable for discount = Old price - Price
+percentofdiscount<-ikea%>%
+  mutate(discount=100-price/old_price*100)
+```
+```{r}
 ikea%>%
   count(designer, sort = TRUE)
 ```
@@ -36,10 +55,7 @@ ikea%>%
   count(other_colors,sort = TRUE)
 ```
 
-```{r}
-## Display the 
 
-```
 
 ## Introduction
 
@@ -67,12 +83,35 @@ The target for this presentation is to increase the sales by reducing the price,
 ikea<-ikea%>%
   mutate(old_price= parse_number(old_price))
 ```
+```{r}
+#number of not online sellable items
+ikea%>%
+  count(sellable_online,sort = FALSE)
+```
 
 ```{r}
-## create a new variable for discount = Old price - Price
-ikea<-ikea%>%
-  mutate(discount=100-price/old_price*100)
+onlyFALSE<-
+ ikea%>%
+  filter(sellable_online=="FALSE")
 ```
+```{r}
+onlyFALSE%>%count(category)
+```
+
+
+```{r}
+
+  ikea%>%
+  filter(sellable_online=="FALSE")%>%count(old_price)  
+
+```
+```{r}
+onlyTRUE<-
+ ikea%>%
+  filter(sellable_online=="TRUE")
+```
+
+
 
 ```{r}
 ##The items that have discount price/ total number of items, The percentage can show that our business runs well or not, regression modal. 
@@ -82,9 +121,10 @@ ikea<-ikea%>%
 
 ```{r}
 ## Classification model, with not sellable online check the percentage how many items have a new price
-
-
-
+ikea %>% 
+  ggplot(aes(x = restaurant, y = total_fat)) +
+  geom_col() +
+  labs(x='Restaurant', y='Total Fat', title='Task 15')
 ```
 
 
