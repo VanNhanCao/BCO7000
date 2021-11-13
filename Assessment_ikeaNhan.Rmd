@@ -42,7 +42,7 @@ ikea %>%
 ```{r}
 ## create a new variable for discount = Old price - Price
 percentofdiscount<-ikea%>%
-  mutate(discount=100-price/old_price*100)
+  mutate(discountprice=100-price/old_price*100)
 ```
 ```{r}
 ikea%>%
@@ -110,22 +110,69 @@ onlyTRUE<-
  ikea%>%
   filter(sellable_online=="TRUE")
 ```
+```{r}
+N1<- ikea%>%
+  filter(old_price!="No old price")%>%
+  mutate(discount=100-price/old_price*100)
+```
+```{r}
+rating<- N1%>%
+  mutate(rating_discount= as.factor(
+    case_when(discount >= 20 ~"Dissatisfied",
+              discount >=10 ~"Considerable",
+    discount<10 ~ "Acceptable",
+    discount>=30~"Unacceptable"
+  )
+  )
+  )
 
-
-
+```
 ```{r}
 ##The items that have discount price/ total number of items, The percentage can show that our business runs well or not, regression modal. 
 
 
 ```
-
 ```{r}
-## Classification model, with not sellable online check the percentage how many items have a new price
-ikea %>% 
-  ggplot(aes(x = restaurant, y = total_fat)) +
-  geom_col() +
-  labs(x='Restaurant', y='Total Fat', title='Task 15')
+##The most expensive furniture on average is ???? with an average price of $???
+ikea <- ikea%>%
+  group_by(category)%>%
+  mutate(average_price = mean(price))%>%
+  ungroup()
+
+ikea%>%
+  select(sellable_online,category,average_price)
+
+
+ikea%>%gather(category,"Bar furniture","average_price",1:2)
+  
+
+
+##are they sellable online and most of them have other color option?
+ikea <- ikea%>%
+  group_by(sellable_online)%>%
+  mutate(colours_available = (other_colors))
+
+
+ikea%>%
+  count(colours_available)
+```
+```{r}
+rating<-ikea%>%
+  mutate(Totalsize= height*width*depth%>% na.omit(height,width,depth)
+
+
+    
+  )
+``` 
+```{r}
+## create a new variable for discount = Old price - Price
+ikea<-ikea%>%
+  mutate(discount=100-price/old_price*100)
+
 ```
 
-
-## 
+```{r}
+Connection<- N1%>%
+  lm(Total_size~
+  
+)
