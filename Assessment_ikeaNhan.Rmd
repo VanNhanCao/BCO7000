@@ -12,7 +12,11 @@ library(skimr)
 
 ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-11-03/ikea.csv')
 ```
-
+```{r}
+## Price, remove the no old price
+ikea<-ikea%>%
+  mutate(old_price= parse_number(old_price))
+```
 ## Executive Summary
 ```{r}
 ## Product are not sellable online
@@ -78,11 +82,7 @@ The target for this presentation is to increase the sales by reducing the price,
 - The percentage of the price after discount = the
 - New expected consumption= (discount) *number of products
 
-```{r}
-## Price, remove the no old price
-ikea<-ikea%>%
-  mutate(old_price= parse_number(old_price))
-```
+
 ```{r}
 #number of not online sellable items
 ikea%>%
@@ -170,12 +170,65 @@ ikea<-ikea%>%
   mutate(discount=100-price/old_price*100)
 
 ```
-
 ```{r}
 ikea%>%
-lm(connection= rating_discount~ Totalsize)
-  summary(connection)
+sapply(.,class)
+```
+```{r}
+ikea %>% 
+  lm(discount ~ Totalsize, data = .) %>%
+  summary()
 
 ```
 
+```{r}
+# Print the dataset
+print(head(ikea))
+
 ```
+```{r}
+# Create random forest for regression
+ikea.rf <- randomForest(rating_discount ~. , data = ikea, mtry = 3,
+						importance = TRUE, na.action = na.omit)
+# Print regression model
+print(ikea.rf)
+
+
+# Plot the error vs the number of trees graph
+plot(ikea.rf)
+
+round(importance(ikea.rf), 2)
+
+```
+```{r}
+round(importance(ikea.rf),2)
+```
+
+
+
+
+```{r}
+str(ikea)
+```
+```{r}
+index=sample(2,nrow(ikea),replace = TRUE,prob = c(0.7,0.3))
+```
+```{r}
+Training= ikea[index==1,]
+Testing= ikea[index==2,]
+```
+```{r}
+RFM= randomForest(discount~.,data = Training)
+```
+```{r}
+discount_pred= predict(RFM,Testing)
+Testing$discount_pred=discount_pred
+View(Testing)
+```
+```{r}
+CFM=table(Testing$discount,Testing$discount_pred)
+CFM
+Classification_accuracy= sum(diag(CFM)/sum(CFM))
+Classification_accuracy
+```
+
