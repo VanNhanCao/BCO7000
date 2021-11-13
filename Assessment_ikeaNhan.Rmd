@@ -41,7 +41,7 @@ ikea %>%
 ```
 ```{r}
 ## create a new variable for discount = Old price - Price
-percentofdiscount<-ikea%>%
+ikea%>%
   mutate(discountprice=100-price/old_price*100)
 ```
 ```{r}
@@ -111,12 +111,12 @@ onlyTRUE<-
   filter(sellable_online=="TRUE")
 ```
 ```{r}
-N1<- ikea%>%
+ikea<- ikea%>%
   filter(old_price!="No old price")%>%
   mutate(discount=100-price/old_price*100)
 ```
 ```{r}
-rating<- N1%>%
+ikea<- ikea%>%
   mutate(rating_discount= as.factor(
     case_when(discount >= 20 ~"Dissatisfied",
               discount >=10 ~"Considerable",
@@ -157,12 +157,12 @@ ikea%>%
   count(colours_available)
 ```
 ```{r}
-rating<-ikea%>%
-  mutate(Totalsize= height*width*depth%>% na.omit(height,width,depth)
+ikea<-ikea%>%
+  mutate(Totalsize= height*width*depth)%>% na.omit(height,width,depth)
 
 
     
-  )
+  
 ``` 
 ```{r}
 ## create a new variable for discount = Old price - Price
@@ -172,7 +172,10 @@ ikea<-ikea%>%
 ```
 
 ```{r}
-Connection<- N1%>%
-  lm(Total_size~
-  
-)
+ikea%>%
+lm(connection= rating_discount~ Totalsize)
+  summary(connection)
+
+```
+
+```
