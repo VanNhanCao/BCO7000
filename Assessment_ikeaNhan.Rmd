@@ -7,9 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-library(skimr)
-
+```
+```{r}
 ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-11-03/ikea.csv')
 ```
 ```{r}
@@ -17,6 +16,7 @@ ikea <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidyt
 ikea<-ikea%>%
   mutate(old_price= parse_number(old_price))
 ```
+
 ## Executive Summary
 ```{r}
 ## Product are not sellable online
@@ -41,7 +41,6 @@ ikea %>%
   labs(x = "Items",
        y = "Number",
        title = "Category")
-
 ```
 ```{r}
 ## create a new variable for discount = Old price - Price
@@ -52,7 +51,19 @@ ikea<-ikea%>%
 ikea%>%
   count(designer, sort = TRUE)
 ```
-
+```{r}
+ikea %>%
+  add_count(designer) %>%
+  mutate(designer_fct = fct_reorder(designer, n)) %>%
+  ggplot(aes(x = designer_fct)) +
+  geom_bar() +
+  geom_text(aes(label = n, y = n), nudge_y = 30)+
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "3",
+       y = "2",
+       title = "1")
+```
 ```{r}
 ## How is the price relaed to the furniture dimensions?
 ikea%>%
@@ -100,10 +111,8 @@ onlyFALSE%>%count(category)
 
 
 ```{r}
-
-  ikea%>%
-  filter(sellable_online=="FALSE")%>%count(old_price)  
-
+#Count the not sellable items having discount price  
+ikea%>%filter(sellable_online=="FALSE")%>%count(old_price)  
 ```
 ```{r}
 onlyTRUE<-
@@ -112,12 +121,13 @@ onlyTRUE<-
 ```
 
 ```{r}
-ikea%>%
+#rank the level of consumption for every items
+ikea<-ikea%>%
   mutate(rating_discount= as.factor(
     case_when(discount >= 20 ~"Dissatisfied",
               discount >=10 ~"Considerable",
     discount<10 ~ "Acceptable",
-    discount>=30~"Unacceptable"
+   
     
  
      )
@@ -125,8 +135,8 @@ ikea%>%
   )
 ```
 ```{r}
+#count the amount of items in every levels  
 ikea%>%count(rating_discount)
-
 ```
 ```{r}
 ikea %>%
@@ -140,12 +150,10 @@ ikea %>%
   labs(x = "Level of Rating",
        y = "Number",
        title ="Standard")
-
 ```
 
 ```{r}
 Designer<- ikea%>%select(category,rating_discount)
-
 ```
 ```{r}
 Huy<- Designer%>%select(category,rating_discount)%>%filter(rating_discount %in% c("Dissatisfied"))%>%count(category)%>% arrange(desc(n))
@@ -166,8 +174,6 @@ Huy %>%
 ```
 ```{r}
 ##The items that have discount price/ total number of items, The percentage can show that our business runs well or not, regression modal. 
-
-
 ```
 ```{r}
 ##The most expensive furniture on average is ???? with an average price of $???
@@ -175,29 +181,20 @@ ikea <- ikea%>%
   group_by(category)%>%
   mutate(average_price = mean(price))%>%
   ungroup()
-
 ikea%>%
   select(sellable_online,category,average_price)
-
-
 ikea%>%gather(category,"Bar furniture","average_price",1:2)
   
-
-
 ##are they sellable online and most of them have other color option?
 ikea <- ikea%>%
   group_by(sellable_online)%>%
   mutate(colours_available = (other_colors))
-
-
 ikea%>%
   count(colours_available)
 ```
 ```{r}
 ikea<-ikea%>%
   mutate(Totalsize= height*width*depth)%>% na.omit(height,width,depth)
-
-
     
   
 ``` 
@@ -214,7 +211,6 @@ ikea %>%
 ## create a new variable for discount = Old price - Price
 ikea<-ikea%>%
   mutate(discount=100-price/old_price*100)
-
 ```
 ```{r}
 ikea%>%
@@ -224,8 +220,8 @@ sapply(.,class)
 ikea %>% 
   lm(discount ~ Totalsize, data = .) %>%
   summary()
-
 ```
-
-
-
+p- value = how significant is the variable•p-value of the coefficients:***:  predictor is meaningful for our model
+R2=Explained Variation of the model/ Total variation of the model
+•Models that poorly fit the data have R² near 0.
+•As you can see, the first one has an R² of 0.01; this means that the model explains only 1% of the data variability
