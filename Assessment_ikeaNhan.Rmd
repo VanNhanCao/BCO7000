@@ -45,8 +45,8 @@ ikea %>%
 ```
 ```{r}
 ## create a new variable for discount = Old price - Price
-ikea%>%
-  mutate(discountprice=100-price/old_price*100)
+ikea<-ikea%>%
+  mutate(discount=100-price/old_price*100)
 ```
 ```{r}
 ikea%>%
@@ -110,11 +110,7 @@ onlyTRUE<-
  ikea%>%
   filter(sellable_online=="TRUE")
 ```
-```{r}
-ikea<- ikea%>%
-  filter(old_price!="No old price")%>%
-  mutate(discount=100-price/old_price*100)
-```
+
 ```{r}
 ikea<- ikea%>%
   mutate(rating_discount= as.factor(
@@ -125,8 +121,32 @@ ikea<- ikea%>%
   )
   )
   )
+ikea%>%count(rating_discount)
 
 ```
+```{r}
+ikea %>%
+  add_count(rating_discount) %>% arrange(desc(n))%>%
+  mutate(rating_discount_fct = fct_reorder(rating_discount, n)) %>%
+  ggplot(aes(x = rating_discount_fct)) +
+  geom_bar() +
+  geom_text(aes(label = n, y = n), nudge_y = 40)+
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "Level of Rating",
+       y = "Number",
+       title ="Standard")
+
+```
+```{r}
+Designer<- ikea%>%select(category,rating_discount)
+
+```
+```{r}
+Designer%>%
+filter(rating_discount="dissatisfied")
+```
+
 ```{r}
 ##The items that have discount price/ total number of items, The percentage can show that our business runs well or not, regression modal. 
 
